@@ -1,0 +1,426 @@
+; File format specification for 64-bit ELF executable
+assignment6_1_exec:     file format elf64-x86-64
+
+; Initialization section - handles program startup
+Disassembly of section .init:
+
+0000000000000e18 <_init>:
+ e18:   48 83 ec 08          ; sub    $0x8,%rsp            ; Allocate stack space
+ e1c:   48 8b 05 c5 11 20 00 ; mov    0x2011c5(%rip),%rax ; Load __gmon_start__
+ e23:   48 85 c0             ; test   %rax,%rax           ; Check if __gmon_start__ is non-NULL
+ e26:   74 02                ; je     e2a <_init+0x12>    ; If NULL, skip calling it
+ e28:   ff d0                ; callq  *%rax               ; Call __gmon_start__
+ e2a:   48 83 c4 08          ; add    $0x8,%rsp           ; Deallocate stack space
+ e2e:   c3                   ; retq                      ; Return from _init
+
+; Procedure Linkage Table (PLT) - for dynamic symbol resolution
+Disassembly of section .plt:
+
+0000000000000e30 <.plt>:
+ e30:   ff 35 da 10 20 00    ; pushq  0x2010da(%rip)      ; Push GOT entry
+ e36:   ff 25 dc 10 20 00    ; jmpq   *0x2010dc(%rip)      ; Jump to dynamic resolver
+ e3c:   0f 1f 40 00          ; nopl   0x0(%rax)           ; NOP padding
+
+; PLT entry for std::basic_ios<char>::fail()
+0000000000000e40 <_ZNKSt9basic_iosIcSt11char_traitsIcEE4failEv@plt>:
+ e40:   ff 25 da 10 20 00    ; jmpq   *0x2010da(%rip)      ; Jump to fail function
+ e46:   68 00 00 00 00       ; pushq  $0x0                ; Push reloc index
+ e4b:   e9 e0 ff ff ff       ; jmpq   e30 <.plt>           ; Jump back to PLT stub
+
+; PLT entry for std::overflow_error constructor
+0000000000000e50 <_ZNSt14overflow_errorC1EPKc@plt>:
+ e50:   ff 25 d2 10 20 00    ; jmpq   *0x2010d2(%rip)
+ e56:   68 01 00 00 00       ; pushq  $0x1
+ e5b:   e9 d0 ff ff ff       ; jmpq   e30 <.plt>
+
+; PLT entry for __cxa_begin_catch
+0000000000000e60 <__cxa_begin_catch@plt>:
+ e60:   ff 25 ca 10 20 00    ; jmpq   *0x2010ca(%rip)
+ e66:   68 02 00 00 00       ; pushq  $0x2
+ e6b:   e9 c0 ff ff ff       ; jmpq   e30 <.plt>
+
+; PLT entry for std::basic_ios<char>::operator bool()
+0000000000000e70 <_ZNKSt9basic_iosIcSt11char_traitsIcEEntEv@plt>:
+ e70:   ff 25 c2 10 20 00    ; jmpq   *0x2010c2(%rip)
+ e76:   68 03 00 00 00       ; pushq  $0x3
+ e7b:   e9 b0 ff ff ff       ; jmpq   e30 <.plt>
+
+; PLT entry for __cxa_allocate_exception
+0000000000000e80 <__cxa_allocate_exception@plt>:
+ e80:   ff 25 ba 10 20 00    ; jmpq   *0x2010ba(%rip)
+ e86:   68 04 00 00 00       ; pushq  $0x4
+ e8b:   e9 a0 ff ff ff       ; jmpq   e30 <.plt>
+
+; PLT entry for std::istream::operator>>(int&)
+0000000000000e90 <_ZNSirsERi@plt>:
+ e90:   ff 25 b2 10 20 00    ; jmpq   *0x2010b2(%rip)
+ e96:   68 05 00 00 00       ; pushq  $0x5
+ e9b:   e9 90 ff ff ff       ; jmpq   e30 <.plt>
+
+; PLT entry for std::domain_error constructor
+0000000000000ea0 <_ZNSt12domain_errorC1EPKc@plt>:
+ ea0:   ff 25 aa 10 20 00    ; jmpq   *0x2010aa(%rip)
+ ea6:   68 06 00 00 00       ; pushq  $0x6
+ eab:   e9 80 ff ff ff       ; jmpq   e30 <.plt>
+
+; PLT entry for std::istream::ignore()
+0000000000000eb0 <_ZNSi6ignoreEli@plt>:
+ eb0:   ff 25 a2 10 20 00    ; jmpq   *0x2010a2(%rip)
+ eb6:   68 07 00 00 00       ; pushq  $0x7
+ ebb:   e9 70 ff ff ff       ; jmpq   e30 <.plt>
+
+; PLT entry for __cxa_free_exception
+0000000000000ec0 <__cxa_free_exception@plt>:
+ ec0:   ff 25 9a 10 20 00    ; jmpq   *0x20109a(%rip)
+ ec6:   68 08 00 00 00       ; pushq  $0x8
+ ecb:   e9 60 ff ff ff       ; jmpq   e30 <.plt>
+
+; PLT entry for __cxa_atexit
+0000000000000ed0 <__cxa_atexit@plt>:
+ ed0:   ff 25 92 10 20 00    ; jmpq   *0x201092(%rip)
+ ed6:   68 09 00 00 00       ; pushq  $0x9
+ edb:   e9 50 ff ff ff       ; jmpq   e30 <.plt>
+
+; PLT entry for operator<<(ostream&, const char*)
+0000000000000ee0 <_ZStlsISt11char_traitsIcEERSt13basic_ostreamIcT_ES5_PKc@plt>:
+ ee0:   ff 25 8a 10 20 00    ; jmpq   *0x20108a(%rip)
+ ee6:   68 0a 00 00 00       ; pushq  $0xa
+ eeb:   e9 40 ff ff ff       ; jmpq   e30 <.plt>
+
+; PLT entry for operator<<(ostream&, ostream&(*)(ostream&))
+0000000000000ef0 <_ZNSolsEPFRSoS_E@plt>:
+ ef0:   ff 25 82 10 20 00    ; jmpq   *0x201082(%rip)
+ ef6:   68 0b 00 00 00       ; pushq  $0xb
+ efb:   e9 30 ff ff ff       ; jmpq   e30 <.plt>
+
+; PLT entry for __stack_chk_fail
+0000000000000f00 <__stack_chk_fail@plt>:
+ f00:   ff 25 7a 10 20 00    ; jmpq   *0x20107a(%rip)
+ f06:   68 0c 00 00 00       ; pushq  $0xc
+ f0b:   e9 20 ff ff ff       ; jmpq   e30 <.plt>
+
+; PLT entry for ios_base::Init constructor
+0000000000000f10 <_ZNSt8ios_base4InitC1Ev@plt>:
+ f10:   ff 25 72 10 20 00    ; jmpq   *0x201072(%rip)
+ f16:   68 0d 00 00 00       ; pushq  $0xd
+ f1b:   e9 10 ff ff ff       ; jmpq   e30 <.plt>
+
+; PLT entry for __cxa_end_catch
+0000000000000f20 <__cxa_end_catch@plt>:
+ f20:   ff 25 6a 10 20 00    ; jmpq   *0x20106a(%rip)
+ f26:   68 0e 00 00 00       ; pushq  $0xe
+ f2b:   e9 00 ff ff ff       ; jmpq   e30 <.plt>
+
+; PLT entry for basic_ios::clear()
+0000000000000f30 <_ZNSt9basic_iosIcSt11char_traitsIcEE5clearESt12_Ios_Iostate@plt>:
+ f30:   ff 25 62 10 20 00    ; jmpq   *0x201062(%rip)
+ f36:   68 0f 00 00 00       ; pushq  $0xf
+ f3b:   e9 f0 fe ff ff       ; jmpq   e30 <.plt>
+
+; PLT entry for __cxa_throw
+0000000000000f40 <__cxa_throw@plt>:
+ f40:   ff 25 5a 10 20 00    ; jmpq   *0x20105a(%rip)
+ f46:   68 10 00 00 00       ; pushq  $0x10
+ f4b:   e9 e0 fe ff ff       ; jmpq   e30 <.plt>
+
+; PLT entry for operator<<(ostream&, int)
+0000000000000f50 <_ZNSolsEi@plt>:
+ f50:   ff 25 52 10 20 00    ; jmpq   *0x201052(%rip)
+ f56:   68 11 00 00 00       ; pushq  $0x11
+ f5b:   e9 d0 fe ff ff       ; jmpq   e30 <.plt>
+
+; PLT entry for _Unwind_Resume
+0000000000000f60 <_Unwind_Resume@plt>:
+ f60:   ff 25 4a 10 20 00    ; jmpq   *0x20104a(%rip)
+ f66:   68 12 00 00 00       ; pushq  $0x12
+ f6b:   e9 c0 fe ff ff       ; jmpq   e30 <.plt>
+
+; Global Offset Table (GOT) for finalize
+Disassembly of section .plt.got:
+
+0000000000000f70 <__cxa_finalize@plt>:
+ f70:   ff 25 42 10 20 00    ; jmpq   *0x201042(%rip)
+ f76:   66 90                ; xchg   %ax,%ax (NOP)
+
+; Program code section
+Disassembly of section .text:
+
+; Program entry point - called by runtime
+0000000000000f80 <_start>:
+ f80:   31 ed                ; xor    %ebp,%ebp       ; Clear base pointer
+ f82:   49 89 d1             ; mov    %rdx,%r9        ; envp
+ f85:   5e                   ; pop    %rsi            ; argv
+ f86:   48 89 e2             ; mov    %rsp,%rdx       ; rdx = stack pointer
+ f89:   48 83 e4 f0          ; and    $0xfffffffffffffff0,%rsp ; Align stack
+ f8d:   50                   ; push   %rax            ; Push return address placeholder
+ f8e:   54                   ; push   %rsp            ; Push pointer to stack
+ f8f:   4c 8d 05 6a 08 00 00 ; lea    0x86a(%rip),%r8 ; __libc_csu_fini
+ f96:   48 8d 0d f3 07 00 00 ; lea    0x7f3(%rip),%rcx ; __libc_csu_init
+ f9d:   48 8d 3d d2 01 00 00 ; lea    0x1d2(%rip),%rdi ; main
+ fa4:   ff 15 36 10 20 00    ; callq  *0x201036(%rip) ; __libc_start_main
+ faa:   f4                   ; hlt                   ; Should never return here
+ fab:   0f 1f 44 00 00       ; nopl   0x0(%rax,%rax,1)
+
+; Function to deregister thread-local storage clones
+0000000000000fb0 <deregister_tm_clones>:
+ fb0:   48 8d 3d 69 10 20 00 ; lea    0x201069(%rip),%rdi
+ fb7:   55                   ; push   %rbp
+ fb8:   48 8d 05 61 10 20 00 ; lea    0x201061(%rip),%rax
+ fbf:   48 39 f8             ; cmp    %rdi,%rax
+ fc2:   48 89 e5             ; mov    %rsp,%rbp
+ fc5:   74 19                ; je     fe0 <deregister_tm_clones+0x30>
+ fc7:   48 8b 05 0a 10 20 00 ; mov    0x20100a(%rip),%rax ; _ITM_deregisterTMCloneTable
+ fce:   48 85 c0             ; test   %rax,%rax
+ fd1:   74 0d                ; je     fe0
+ fd3:   5d                   ; pop    %rbp
+ fd4:   ff e0                ; jmpq   *%rax
+ fd6:   66 2e 0f 1f 84 00 00 ; nopw   %cs:0x0(%rax,%rax,1)
+ fdd:   00 00 00
+ fe0:   5d                   ; pop    %rbp
+ fe1:   c3                   ; retq
+ fe2:   0f 1f 40 00          ; nopl   0x0(%rax)
+ fe6:   66 2e 0f 1f 84 00 00 ; nopw   %cs:0x0(%rax,%rax,1)
+ fed:   00 00 00
+
+; Function to register thread-local storage clones
+0000000000000ff0 <register_tm_clones>:
+ ff0:   48 8d 3d 29 10 20 00 ; lea    0x201029(%rip),%rdi
+ ff7:   48 8d 35 22 10 20 00 ; lea    0x201022(%rip),%rsi
+ ffe:   55                   ; push   %rbp
+ fff:   48 29 fe             ; sub    %rdi,%rsi
+1002:   48 89 e5             ; mov    %rsp,%rbp
+1005:   48 c1 fe 03          ; sar    $0x3,%rsi
+1009:   48 89 f0             ; mov    %rsi,%rax
+100c:   48 c1 e8 3f          ; shr    $0x3f,%rax
+1010:   48 01 c6             ; add    %rax,%rsi
+1013:   48 d1 fe             ; sar    %rsi
+1016:   74 18                ; je     1030 <register_tm_clones+0x40>
+1018:   48 8b 05 d1 0f 20 00 ; mov    0x200fd1(%rip),%rax ; _ITM_registerTMCloneTable
+101f:   48 85 c0             ; test   %rax,%rax
+1022:   74 0c                ; je     1030
+1024:   5d                   ; pop    %rbp
+1025:   ff e0                ; jmpq   *%rax
+1027:   66 0f 1f 84 00 00 00 ; nopw   0x0(%rax,%rax,1)
+102e:   00 00
+1030:   5d                   ; pop    %rbp
+1031:   c3                   ; retq
+
+; Function handling global destructors
+0000000000001040 <__do_global_dtors_aux>:
+1040:   80 3d 11 12 20 00 00 ; cmpb   $0x0,0x201211(%rip) ; Check completion flag
+1047:   75 2f                ; jne    1078 <...+0x38>
+1049:   48 83 3d 67 0f 20 00 ; cmpq   $0x0,0x200f67(%rip) ; Check if cxa_finalize needed
+1050:   00
+1051:   55                   ; push   %rbp
+1052:   48 89 e5             ; mov    %rsp,%rbp
+1055:   74 0c                ; je     1063 <...+0x23>
+1057:   48 8b 3d aa 0f 20 00 ; mov    0x200faa(%rip),%rdi ; __dso_handle
+105e:   e8 0d ff ff ff       ; callq  f70 <__cxa_finalize@plt>
+1063:   e8 48 ff ff ff       ; callq  fb0 <deregister_tm_clones>
+1068:   c6 05 e9 11 20 00 01 ; movb   $0x1,0x2011e9(%rip) ; Mark destructors done
+106f:   5d                   ; pop    %rbp
+1070:   c3                   ; retq
+1071:   0f 1f 80 00 00 00 00 ; nop
+1078:   f3 c3                ; repz retq
+107a:   66 0f 1f 44 00 00    ; nopw
+
+; Frame dummy function
+0000000000001080 <frame_dummy>:
+1080:   55                   ; push   %rbp
+1081:   48 89 e5             ; mov    %rsp,%rbp
+1084:   5d                   ; pop    %rbp
+1085:   e9 66 ff ff ff       ; jmpq   ff0 <register_tm_clones>
+
+; validateInput function
+000000000000108a <_Z13validateInputv>:
+108a:   55                   ; push   %rbp
+108b:   48 89 e5             ; mov    %rsp,%rbp
+108e:   48 8d 3d bb 10 20 00 ; lea    0x2010bb(%rip),%rdi ; &std::cin
+1095:   e8 a6 fd ff ff       ; callq  e40 <fail()>        ; Check cin.fail()
+109a:   84 c0                ; test   %al,%al
+109c:   74 31                ; je     10cf <...+0x45>     ; If no fail, jump
+109e:   be 00 00 00 00       ; mov    $0x0,%esi           ; clear(0)
+10a3:   48 8d 3d a6 10 20 00 ; lea    0x2010a6(%rip),%rdi ; &std::cin
+10aa:   e8 81 fe ff ff       ; callq  f30 <clear()>
+10af:   e8 c7 06 00 00       ; callq  177b <numeric_limits<long>::max()>
+10b4:   ba 0a 00 00 00       ; mov    $0xa,%edx           ; ignore(10)
+10b9:   48 89 c6             ; mov    %rax,%rsi
+10bc:   48 8d 3d 7d 10 20 00 ; lea    0x20107d(%rip),%rdi ; std::cin
+10c3:   e8 e8 fd ff ff       ; callq  eb0 <ignore()>
+10c8:   b8 00 00 00 00       ; mov    $0x0,%eax           ; return false
+10cd:   eb 05                ; jmp    10d4
+10cf:   b8 01 00 00 00       ; mov    $0x1,%eax           ; return true
+10d4:   5d                   ; pop    %rbp
+10d5:   c3                   ; retq
+
+; isWithinBounds function
+00000000000010d6 <_Z14isWithinBoundsi>:
+10d6:   55                   ; push   %rbp
+10d7:   48 89 e5             ; mov    %rsp,%rbp
+10da:   89 7d fc             ; mov    %edi,-0x4(%rbp) ; x
+10dd:   81 7d fc 00 00 00 80 ; cmpl   $0x80000000,-0x4(%rbp) ; Check INT_MIN
+10e4:   74 10                ; je     10f6 <...+0x20>
+10e6:   81 7d fc ff ff ff 7f ; cmpl   $0x7fffffff,-0x4(%rbp) ; Check INT_MAX
+10ed:   74 07                ; je     10f6
+10ef:   b8 01 00 00 00       ; mov    $0x1,%eax ; return true
+10f4:   eb 05                ; jmp    10fb
+10f6:   b8 00 00 00 00       ; mov    $0x0,%eax ; return false
+10fb:   5d                   ; pop    %rbp
+10fc:   c3                   ; retq
+
+; DisplayMenu function
+00000000000010fd <_Z11DisplayMenuv>:
+10fd:   55                   ; push   %rbp
+10fe:   48 89 e5             ; mov    %rsp,%rbp
+1101:   48 8d 35 11 07 00 00 ; lea    0x711(%rip),%rsi ; menu string
+1108:   48 8d 3d 11 0f 20 00 ; lea    0x200f11(%rip),%rdi ; std::cout
+110f:   e8 cc fd ff ff       ; callq  ee0 <operator<<>
+1114:   48 8d 35 0f 07 00 00 ; lea    0x70f(%rip),%rsi ; menu line
+111b:   48 8d 3d fe 0e 20 00 ; lea    0x200efe(%rip),%rdi
+1122:   e8 b9 fd ff ff       ; callq  ee0
+1127:   48 8d 35 0c 07 00 00 ; lea    0x70c(%rip),%rsi
+112e:   48 8d 3d eb 0e 20 00 ; lea    0x200eeb(%rip),%rdi
+1135:   e8 a6 fd ff ff       ; callq  ee0
+113a:   48 8d 35 06 07 00 00 ; lea    0x706(%rip),%rsi
+1141:   48 8d 3d d8 0e 20 00 ; lea    0x200ed8(%rip),%rdi
+1148:   e8 93 fd ff ff       ; callq  ee0
+114d:   48 8d 35 00 07 00 00 ; lea    0x700(%rip),%rsi
+1154:   48 8d 3d c5 0e 20 00 ; lea    0x200ec5(%rip),%rdi
+115b:   e8 80 fd ff ff       ; callq  ee0
+1160:   48 8d 35 f6 06 00 00 ; lea    0x6f6(%rip),%rsi
+1167:   48 8d 3d b2 0e 20 00 ; lea    0x200eb2(%rip),%rdi
+116e:   e8 6d fd ff ff       ; callq  ee0
+1173:   90                   ; nop
+1174:   5d                   ; pop    %rbp
+1175:   c3                   ; retq
+
+0000000000001176 <main>:
+1176:   55                      ; push   %rbp                  ; Save old base pointer
+1177:   48 89 e5                ; mov    %rsp,%rbp            ; Set new base pointer
+117a:   41 55                   ; push   %r13                 ; Save r13
+117c:   41 54                   ; push   %r12                 ; Save r12
+117e:   53                      ; push   %rbx                 ; Save rbx
+117f:   48 83 ec 28             ; sub    $0x28,%rsp           ; Allocate 40 bytes on stack
+1183:   64 48 8b 04 25 28 00    ; mov    %fs:0x28,%rax        ; Load stack canary into rax
+118a:   00 00
+118c:   48 89 45 d8             ; mov    %rax,-0x28(%rbp)     ; Store canary in local variable
+1190:   31 c0                   ; xor    %eax,%eax            ; eax = 0
+1192:   c7 45 c4 00 00 00 00    ; movl   $0x0,-0x3c(%rbp)     ; choice = 0
+1199:   c7 45 c8 00 00 00 00    ; movl   $0x0,-0x38(%rbp)     ; val1 = 0
+11a0:   c7 45 cc 00 00 00 00    ; movl   $0x0,-0x34(%rbp)     ; val2 = 0
+
+; From here, the code repeatedly displays a menu, reads input (choice, val1, val2),
+; validates input, checks bounds, performs arithmetic operations, and may throw exceptions.
+; The process continues until choice == 4 (exit).
+; Overflow checks, domain checks, and printing of results occur in this block.
+; Exception handling code handles thrown exceptions and unwinds the stack as needed.
+
+; Eventually, when choice == 4, main returns 0.
+
+1614:   b8 00 00 00 00          ; mov    $0x0,%eax           ; return 0 from main
+1619:   48 8b 4d d8             ; mov    -0x28(%rbp),%rcx    ; Load stored canary
+161d:   64 48 33 0c 25 28 00    ; xor    %fs:0x28,%rcx        ; Check stack canary
+1624:   00 00
+1626:   0f 84 e6 00 00 00       ; je     1712                 ; If canary matches, continue
+162c:   e9 dc 00 00 00          ; jmpq   170d                 ; If mismatch, call __stack_chk_fail
+
+; Exception handling code executes here if needed. After that:
+
+1712:   48 83 c4 28             ; add    $0x28,%rsp           ; Deallocate stack space
+1716:   5b                      ; pop    %rbx                 ; Restore rbx
+1717:   41 5c                   ; pop    %r12                 ; Restore r12
+1719:   41 5d                   ; pop    %r13                 ; Restore r13
+171b:   5d                      ; pop    %rbp                 ; Restore base pointer
+171c:   c3                      ; retq                       ; Return from main
+
+; Static initialization and destruction routines, called before/after main:
+
+000000000000171d <_Z41__static_initialization_and_destruction_0ii>:
+171d:   55                      ; push   %rbp
+171e:   48 89 e5                ; mov    %rsp,%rbp
+1721:   48 83 ec 10             ; sub    $0x10,%rsp
+1725:   89 7d fc                ; mov    %edi,-0x4(%rbp)
+1728:   89 75 f8                ; mov    %esi,-0x8(%rbp)
+172b:   83 7d fc 01             ; cmpl   $0x1,-0x4(%rbp)
+172f:   75 32                   ; jne    1763
+1731:   81 7d f8 ff ff 00 00    ; cmpl   $0xffff,-0x8(%rbp)
+1738:   75 29                   ; jne    1763
+173a:   48 8d 3d 18 0b 20 00    ; lea    0x200b18(%rip),%rdi ; Address of ios_base::Init object
+1741:   e8 ca f7 ff ff          ; callq  f10 <_ZNSt8ios_base4InitC1Ev@plt> ; Call ios_base::Init ctor
+1746:   48 8d 15 bb 08 20 00    ; lea    0x2008bb(%rip),%rdx ; __dso_handle
+174d:   48 8d 35 05 0b 20 00    ; lea    0x200b05(%rip),%rsi ; Address of Init object
+1754:   48 8b 05 9d 08 20 00    ; mov    0x20089d(%rip),%rax ; Destructor function
+175b:   48 89 c7                ; mov    %rax,%rdi
+175e:   e8 6d f7 ff ff          ; callq  ed0 <__cxa_atexit@plt> ; Register dtor with atexit
+1763:   90                      ; nop
+1764:   c9                      ; leaveq
+1765:   c3                      ; retq
+
+0000000000001766 <_GLOBAL__sub_I__Z13validateInputv>:
+1766:   55                      ; push   %rbp
+1767:   48 89 e5                ; mov    %rsp,%rbp
+176a:   be ff ff 00 00          ; mov    $0xffff,%esi
+176f:   bf 01 00 00 00          ; mov    $0x1,%edi
+1774:   e8 a4 ff ff ff          ; callq  171d <_Z41__static_initialization_and_destruction_0ii>
+1779:   5d                      ; pop    %rbp
+177a:   c3                      ; retq
+
+; numeric_limits<long>::max()
+000000000000177b <_ZNSt14numeric_limitsIlE3maxEv>:
+177b:   55                      ; push   %rbp
+177c:   48 89 e5                ; mov    %rsp,%rbp
+177f:   48 b8 ff ff ff ff ff    ; movabs $0x7fffffffffffffff,%rax ; LONG_MAX
+1786:   ff ff 7f
+1789:   5d                      ; pop    %rbp
+178a:   c3                      ; retq
+178b:   0f 1f 44 00 00          ; nopl
+
+; __libc_csu_init - Runs global constructors before main
+0000000000001790 <__libc_csu_init>:
+1790:   41 57                   ; push   %r15
+1792:   41 56                   ; push   %r14
+1794:   49 89 d7                ; mov    %rdx,%r15          ; third argument
+1797:   41 55                   ; push   %r13
+1799:   41 54                   ; push   %r12
+179b:   4c 8d 25 06 05 20 00    ; lea    0x200506(%rip),%r12 ; start of ctors
+17a2:   55                      ; push   %rbp
+17a3:   48 8d 2d 0e 05 20 00    ; lea    0x20050e(%rip),%rbp ; end of ctors
+17aa:   53                      ; push   %rbx
+17ab:   41 89 fd                ; mov    %edi,%r13d         ; first argument (argc)
+17ae:   49 89 f6                ; mov    %rsi,%r14          ; second argument (argv)
+17b1:   4c 29 e5                ; sub    %r12,%rbp
+17b4:   48 83 ec 08             ; sub    $0x8,%rsp
+17b8:   48 c1 fd 03             ; sar    $0x3,%rbp          ; number of ctors
+17bc:   e8 57 f6 ff ff          ; callq  e18 <_init>        ; Call _init
+17c1:   48 85 ed                ; test   %rbp,%rbp
+17c4:   74 20                   ; je     17e6               ; If no ctors, skip
+17c6:   31 db                   ; xor    %ebx,%ebx          ; ebx = 0 (index)
+17c8:   0f 1f 84 00 00 00 00 00 ; nop
+17d0:   4c 89 fa                ; mov    %r15,%rdx
+17d3:   4c 89 f6                ; mov    %r14,%rsi
+17d6:   44 89 ef                ; mov    %r13d,%edi
+17d9:   41 ff 14 dc             ; callq  *(%r12,%rbx,8)     ; Call each constructor
+17dd:   48 83 c3 01             ; add    $0x1,%rbx
+17e1:   48 39 dd                ; cmp    %rbx,%rbp          ; Check if all ctors called
+17e4:   75 ea                   ; jne    17d0
+17e6:   48 83 c4 08             ; add    $0x8,%rsp
+17ea:   5b                      ; pop    %rbx
+17eb:   5d                      ; pop    %rbp
+17ec:   41 5c                   ; pop    %r12
+17ee:   41 5d                   ; pop    %r13
+17f0:   41 5e                   ; pop    %r14
+17f2:   41 5f                   ; pop    %r15
+17f4:   c3                      ; retq
+17f5:   90                      ; nop
+17f6:   66 2e 0f 1f 84 00 00    ; nopw %cs:0x0(%rax,%rax,1)
+17fd:   00 00 00
+
+; __libc_csu_fini - no finalization code needed
+0000000000001800 <__libc_csu_fini>:
+1800:   f3 c3                   ; repz retq
+
+; .fini section - runs at program termination
+0000000000001804 <_fini>:
+1804:   48 83 ec 08             ; sub    $0x8,%rsp
+1808:   48 83 c4 08             ; add    $0x8,%rsp
+180c:   c3                      ; retq

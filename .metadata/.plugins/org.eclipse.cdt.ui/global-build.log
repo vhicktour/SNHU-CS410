@@ -1,0 +1,18 @@
+16:01:27 **** Incremental Build of configuration Debug for project helloworld ****
+make all 
+make: Nothing to be done for 'all'.
+16:01:31 **** Incremental Build of configuration Debug for project helloworld ****
+make all 
+make: Nothing to be done for 'all'.
+16:01:44 **** Incremental Build of configuration Debug for project helloworld ****
+make all 
+Building file: ../src/helloworld.cpp
+Invoking: GCC C++ Compiler
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/helloworld.d" -MT"src/helloworld.d" -o "src/helloworld.o" "../src/helloworld.cpp"
+Finished building: ../src/helloworld.cpp
+ 
+Building target: helloworld
+Invoking: GCC C++ Linker
+g++  -o "helloworld"  ./src/helloworld.o   
+Finished building target: helloworld
+ 

@@ -1,0 +1,10 @@
+{
+    "commands": {
+        "start startxfce4": "startxfce4"
+    },
+    "preview": {
+        "Virtual Desktop": "https://{{domain3000}}/"
+
+    }
+}
+
